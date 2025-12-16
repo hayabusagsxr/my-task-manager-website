@@ -4,6 +4,7 @@ import TaskList from './components/TaskList';
 import TaskBoard from './components/TaskBoard';
 import AddTaskModal from './components/AddTaskModal';
 import TaskDetailsModal from './components/TaskDetailsModal';
+import './styles/App.css';
 
 function App() {
     const [view, setView] = useState('list');

@@ -1,19 +1,31 @@
 import React from 'react';
-import { ChevronRight, CheckSquare } from 'lucide-react';
+import '../styles/TaskBoard.css';
 
 export default function TaskBoard({ tasks, onTaskClick }) {
     const statuses = ['To do', 'Doing', 'Done'];
 
     if (tasks.length === 0) {
         return (
-            <div className="board-empty-state">
-                <div className="board-empty-content">
-                    <div className="board-empty-icon">
-                        <CheckSquare size={32} />
-                    </div>
-                    <h3 className="board-empty-title">No tasks yet</h3>
-                    <p className="board-empty-description">Get started by creating your first task</p>
-                </div>
+            <div className="task-board">
+                {statuses.map((status) => {
+                    const statusClass = status.toLowerCase().replace(' ', '-');
+
+                    return (
+                        <div key={status} className={`board-column ${statusClass}`}>
+                            <div className={`column-header ${statusClass}`}>
+                                <div className={`column-indicator ${statusClass}`} />
+                                <span className="column-title">{status}</span>
+                                <span className="column-count">0</span>
+                            </div>
+
+                            <div className="board-tasks">
+                                <div className="board-column-empty">
+                                    <p>No tasks</p>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         );
     }
@@ -25,10 +37,11 @@ export default function TaskBoard({ tasks, onTaskClick }) {
                 const statusClass = status.toLowerCase().replace(' ', '-');
 
                 return (
-                    <div key={status} className="board-column">
-                        <div className="column-header">
+                    <div key={status} className={`board-column ${statusClass}`}>
+                        <div className={`column-header ${statusClass}`}>
                             <div className={`column-indicator ${statusClass}`} />
                             <span className="column-title">{status}</span>
+                            <span className="column-count">{statusTasks.length}</span>
                         </div>
 
                         <div className="board-tasks">
@@ -38,15 +51,15 @@ export default function TaskBoard({ tasks, onTaskClick }) {
                                     onClick={() => onTaskClick(task)}
                                     className={`board-task-card ${statusClass}`}
                                 >
-                                    <div className="board-task-content">
-                                        <div className="board-task-info">
-                                            <p className="board-task-name">{task.name}</p>
-                                            <p className="board-task-due">Due on {task.dueDate}</p>
+                                    <div className="board-card-top">
+                                        <h4 className="board-task-title">{task.name}</h4>
+                                        <div className={`board-status-badge ${statusClass}`}>
+                                            <div className={`board-status-dot ${statusClass}`} />
                                         </div>
-                                        <ChevronRight
-                                            size={20}
-                                            className="board-task-chevron"
-                                        />
+                                    </div>
+                                    <p className="board-task-description">{task.description}</p>
+                                    <div className="board-card-bottom">
+                                        <span className="board-task-date">{task.dueDate}</span>
                                     </div>
                                 </div>
                             ))}

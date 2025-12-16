@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Edit, Trash2 } from 'lucide-react';
+import '../styles/TaskDetailsModal.css';
 
 export default function TaskDetailsModal({ task, onClose, onDelete, onEdit }) {
     const handleDelete = () => {
