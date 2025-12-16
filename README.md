@@ -8,6 +8,7 @@ A simple task manager built with React. This project allows users to create, tra
 - Mark tasks as complete or pending
 - Lightweight and fast
 - Uses icons from `lucide-react`
+- Built with React Hooks (`useState`, `useEffect`, etc.)
 
 ## Technologies Used
 
