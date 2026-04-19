@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { List, LayoutGrid } from 'lucide-react';
 import TaskList from './components/TaskList';
 import TaskBoard from './components/TaskBoard';
@@ -6,17 +6,28 @@ import AddTaskModal from './components/AddTaskModal';
 import TaskDetailsModal from './components/TaskDetailsModal';
 import './styles/App.css';
 
-function App() {
+export default function App() {
     const [view, setView] = useState('list');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [editingTask, setEditingTask] = useState(null);
-    const [tasks, setTasks] = useState([]);
+
+    const [tasks, setTasks] = useState(() => {
+        const savedTasks = localStorage.getItem('my-tasks');
+        if (savedTasks) {
+            return JSON.parse(savedTasks);
+        }
+        return [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem('my-tasks', JSON.stringify(tasks));
+    }, [tasks]);
 
     const handleAddTask = (task) => {
         const newTask = {
             ...task,
-            id: Date.now().toString(),
+            id: crypto.randomUUID(),
         };
         setTasks([...tasks, newTask]);
         setIsModalOpen(false);
@@ -32,6 +43,12 @@ function App() {
 
     const handleDeleteTask = (id) => {
         setTasks(tasks.filter((task) => task.id !== id));
+    };
+
+    const handleStatusUpdate = (taskId, newStatus) => {
+        setTasks(tasks.map((task) =>
+            task.id === taskId ? { ...task, status: newStatus } : task
+        ));
     };
 
     const handleTaskClick = (task) => {
@@ -63,14 +80,14 @@ function App() {
                         onClick={() => setView('list')}
                         className={`view-button ${view === 'list' ? 'active' : ''}`}
                     >
-                        <List size={20} />
+                        <List size={20} style={{ marginRight: '6px' }} />
                         <span>List</span>
                     </button>
                     <button
                         onClick={() => setView('board')}
                         className={`view-button ${view === 'board' ? 'active' : ''}`}
                     >
-                        <LayoutGrid size={20} />
+                        <LayoutGrid size={20} style={{ marginRight: '6px' }} />
                         <span>Board</span>
                     </button>
                 </div>
@@ -80,7 +97,11 @@ function App() {
                 {view === 'list' ? (
                     <TaskList tasks={tasks} onTaskClick={handleTaskClick} />
                 ) : (
-                    <TaskBoard tasks={tasks} onTaskClick={handleTaskClick} />
+                    <TaskBoard
+                        tasks={tasks}
+                        onTaskClick={handleTaskClick}
+                        onStatusUpdate={handleStatusUpdate}
+                    />
                 )}
             </main>
 
@@ -110,5 +131,3 @@ function App() {
         </div>
     );
 }
-
-export default App;

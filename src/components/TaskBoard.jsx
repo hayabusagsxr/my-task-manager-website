@@ -1,8 +1,24 @@
 import React from 'react';
 import '../styles/TaskBoard.css';
 
-export default function TaskBoard({ tasks, onTaskClick }) {
+export default function TaskBoard({ tasks, onTaskClick, onStatusUpdate }) {
     const statuses = ['To do', 'Doing', 'Done'];
+
+    const handleDragStart = (e, id) => {
+        e.dataTransfer.setData('taskId', id);
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e, status) => {
+        e.preventDefault();
+        const draggedTaskId = e.dataTransfer.getData('taskId');
+        if (draggedTaskId) {
+            onStatusUpdate(draggedTaskId, status);
+        }
+    };
 
     if (tasks.length === 0) {
         return (
@@ -11,7 +27,12 @@ export default function TaskBoard({ tasks, onTaskClick }) {
                     const statusClass = status.toLowerCase().replace(' ', '-');
 
                     return (
-                        <div key={status} className={`board-column ${statusClass}`}>
+                        <div
+                            key={status}
+                            className={`board-column ${statusClass}`}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, status)}
+                        >
                             <div className={`column-header ${statusClass}`}>
                                 <div className={`column-indicator ${statusClass}`} />
                                 <span className="column-title">{status}</span>
@@ -37,7 +58,12 @@ export default function TaskBoard({ tasks, onTaskClick }) {
                 const statusClass = status.toLowerCase().replace(' ', '-');
 
                 return (
-                    <div key={status} className={`board-column ${statusClass}`}>
+                    <div
+                        key={status}
+                        className={`board-column ${statusClass}`}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, status)}
+                    >
                         <div className={`column-header ${statusClass}`}>
                             <div className={`column-indicator ${statusClass}`} />
                             <span className="column-title">{status}</span>
@@ -48,6 +74,8 @@ export default function TaskBoard({ tasks, onTaskClick }) {
                             {statusTasks.map((task) => (
                                 <div
                                     key={task.id}
+                                    draggable
+                                    onDragStart={(e) => handleDragStart(e, task.id)}
                                     onClick={() => onTaskClick(task)}
                                     className={`board-task-card ${statusClass}`}
                                 >

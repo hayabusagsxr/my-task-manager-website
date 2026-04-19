@@ -23,7 +23,7 @@ export default function AddTaskModal({ onClose, onSubmit, editTask }) {
             setDescription(editTask.description);
             setStatus(editTask.status);
 
-            const dateParts = editTask.dueDate.match(/(\w+)\s+(\d+),\s+(\d+)\s+at\s+(\d+):(\d+)/);
+            const dateParts = editTask.dueDate.match(/([a-zA-Z]+)\s+(\d+),\s+(\d+)\s+at\s+(\d+):(\d+)/);
             if (dateParts) {
                 setMonth(dateParts[1]);
                 setDay(dateParts[2]);
@@ -37,31 +37,17 @@ export default function AddTaskModal({ onClose, onSubmit, editTask }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const formattedHour = hour.padStart(2, '0');
-        const formattedMinute = minute.padStart(2, '0');
-        const dueDate = `${month} ${day}, ${year} at ${formattedHour}:${formattedMinute}`;
+        const cleanHour = hour.toString().padStart(2, '0');
+        const cleanMinute = minute.toString().padStart(2, '0');
+        const dueDate = `${month} ${day}, ${year} at ${cleanHour}:${cleanMinute}`;
 
-        onSubmit({
-            name,
-            description,
-            dueDate,
-            status,
-        });
+        onSubmit({ name, description, dueDate, status });
     };
 
     return (
-        <div
-            className="modal-overlay"
-            onClick={onClose}
-        >
-            <div
-                className="modal-content"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <button
-                    onClick={onClose}
-                    className="modal-close-button"
-                >
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <button onClick={onClose} className="modal-close-button">
                     <X size={24} />
                 </button>
 
@@ -70,9 +56,7 @@ export default function AddTaskModal({ onClose, onSubmit, editTask }) {
                 <form onSubmit={handleSubmit} className="task-form">
                     <div className="form-row">
                         <div className="form-group form-flex-2">
-                            <label htmlFor="name" className="form-label">
-                                Name
-                            </label>
+                            <label htmlFor="name" className="form-label">Name</label>
                             <input
                                 type="text"
                                 id="name"
@@ -85,9 +69,7 @@ export default function AddTaskModal({ onClose, onSubmit, editTask }) {
                         </div>
 
                         <div className="form-group form-flex-1">
-                            <label htmlFor="status" className="form-label">
-                                Status
-                            </label>
+                            <label htmlFor="status" className="form-label">Status</label>
                             <select
                                 id="status"
                                 value={status}
@@ -102,9 +84,7 @@ export default function AddTaskModal({ onClose, onSubmit, editTask }) {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="description" className="form-label">
-                            Description
-                        </label>
+                        <label htmlFor="description" className="form-label">Description</label>
                         <textarea
                             id="description"
                             value={description}
@@ -200,17 +180,10 @@ export default function AddTaskModal({ onClose, onSubmit, editTask }) {
                     </div>
 
                     <div className="form-actions">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="cancel-button"
-                        >
+                        <button type="button" onClick={onClose} className="cancel-button">
                             Cancel
                         </button>
-                        <button
-                            type="submit"
-                            className="submit-button"
-                        >
+                        <button type="submit" className="submit-button">
                             {editTask ? 'Update task' : 'Add task'}
                         </button>
                     </div>
